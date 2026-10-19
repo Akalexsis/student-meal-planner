@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { Text, View } from "react-native";
 
 export default function Index() {
@@ -7,7 +8,8 @@ export default function Index() {
       <Text> Make meal planning fast, affordable, and stress free! Click the button below
           to get started.
       </Text>
-      {/* Insert Button here */}
+      {/* Directs users to the preferences questionnaire */}
+      <Link href="/preferences"> Get Started </Link>
     </View>
   );
 }

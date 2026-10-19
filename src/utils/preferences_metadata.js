@@ -2,7 +2,7 @@
 export const preferencesMetadata = [
     {
         key : "name", // need key when mapping over data to identify each question
-        default_value : String,
+        default_value : " ",
         question : "What's Your Name?",
         subheading : "For a personalized experience, what would you like to be called?",
         input_type : "text",
@@ -18,7 +18,7 @@ export const preferencesMetadata = [
     // },
     {
         key : "budget",
-        default_value : String,
+        default_value : " ",
         question : "Monthly Budget",
         subheading : "To reach your financial goals, please enter your monthly budget.",
         input_type : "numberic",
