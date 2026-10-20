@@ -8,14 +8,14 @@ export const preferencesMetadata = [
         input_type : "text",
         required : "true"
     },
-    // {
-    //     key : "cuisine",
-    //     default_value : [],
-    //     question : "Preferred Cuisines",
-    //     subheading : "To improve meal recommendations, select the cuisines you like most.",
-    //     input_type : ["American", "Mexican", "Quick and Easy", "Indian", "Mediterranean", "Inexpensive", "Italian"],
-    //     required : "true"
-    // },
+    {
+        key : "cuisine",
+        default_value : [],
+        question : "Preferred Cuisines",
+        subheading : "To improve meal recommendations, select the cuisines you like most.",
+        input_type : ["American", "Mexican", "Quick and Easy", "Indian", "Mediterranean", "Inexpensive", "Italian"],
+        required : "true"
+    },
     {
         key : "budget",
         default_value : " ",
