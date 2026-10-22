@@ -1,7 +1,7 @@
 // Preferences UI to display preferences form to user
 import { useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput } from "react-native";
-import { View } from "react-native-web";
+import { UseFormContext } from "../../utils/FormContext";
 import { preferencesMetadata } from "../../utils/preferences_metadata";
 
 // init object to store user preferences where key - question identifier, type - data type question can store
@@ -14,53 +14,12 @@ preferencesMetadata.forEach((question) => {
     initialPreferences[key] =  type;
 }); 
 
-function MultiselectScreen({options}) {
-    ` 
-        UI for multiselect, renders UI for each button and saves selection when user clicks on it
-        options - array of options to render to screen
-
-        isSelected - highlights button when it is selected
-        selectedItems - saves array of items 
-    `
-    const [isSelected, setIsSelected] = useState(false);
-    const [selectedItems, setSelectedItems] = useState([]);
-
-    console.log(`Options: ${options}`);
-
-    // toggle button each time it is selected and save response
-    const onSelect = (option) => {
-        setIsSelected(!isSelected);
-        // console.log(`Selected option: ${selectedItems.includes(option)}`);
-        
-        // // remove item if it has already been saved, else save it
-        // if (selectedItems.includes(option)) {
-        //     let filteredItems = selectedItems.filter( (item) => { item !== option } );
-        //     setSelectedItems(filteredItems);
-        // } 
-        // else {
-        //     setSelectedItems((prev) => [...prev, option]);
-        // }
-        
-        // console.log(`Selected items: ${selectedItems}`);
+// place pages dictionary here where key = index and value = component to render
+    const pages = {
+        0 : 'Name', // REPLACE W ACTUAL COMPONENT
+        1 : 'Meal options',
+        2 : 'Budget'
     }
-   
-
-    return(
-        // render each option as its own individual button
-        <View>
-            {
-                options && options.map((option, key) => {
-                    return(
-                        <Pressable key={key} style={{"backgroundColor": isSelected ? "bule" : "white"}} onPress={(option) => onSelect(option)}>
-                            <Text> {option} </Text>
-                        </Pressable>
-                    );
-                })
-            }
-        </View>
-    )
-
-}
 
 export default function PreferencesForm(){
     `
@@ -74,6 +33,11 @@ export default function PreferencesForm(){
     const [key, setKey] = useState(""); 
     let index = useRef(0);
     
+    // change which page is currently selected
+    const { currPage, setCurrPage }  = UseFormContext();
+
+    
+    
     // save user preferences
     const handlePreferences = (key, value) => {
         setUserPreferences((prev) => ( { ...prev, [key]: value } ))
@@ -85,11 +49,16 @@ export default function PreferencesForm(){
         // if (index.current === preferencesMetadata.length - 1) route to dashboard
         index.current++;
         setKey(preferencesMetadata[index.current]["key"]); // save current key value
+
+        // trigger submit function when on final page
+        if ( currPage === preferencesMetadata.length - 1 ) return; // replace w submit button
+        setCurrPage(currPage + 1);
     }
 
     const onBack = () => {
         index.current--;
         setKey(preferencesMetadata[index.current]["key"]); // save current key value
+        setCurrPage(currPage--);
     }
 
     return(
@@ -111,14 +80,11 @@ export default function PreferencesForm(){
                 <Text>{preferencesMetadata[index.current]["subheading"]}</Text>
 
                 {/* conditionally change page style based on input type */}
-                { preferencesMetadata[index.current]["input_type"] === "text" ?
                     <TextInput 
                         onChangeText={(val) => handlePreferences(key, val)}
                         value={userPreferences[key]}
                         keyboardType={preferencesMetadata[index.current]["input_type"]}
-                    />  :
-                    <MultiselectScreen options={preferencesMetadata[index.current]["input_type"]}/> 
-                }   
+                    />  
         </KeyboardAvoidingView>
                 
     );
