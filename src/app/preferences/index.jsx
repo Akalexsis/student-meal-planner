@@ -1,8 +1,9 @@
 // Preferences UI to display preferences form to user
-import { useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput } from "react-native";
-import { UseFormContext } from "../../utils/FormContext";
+import { KeyboardAvoidingView, Platform, Pressable, Text } from "react-native";
+import { useFormContext } from "../../utils/FormContext";
 import { preferencesMetadata } from "../../utils/preferences_metadata";
+import MultiselectScreen from "./MultiSelectScreen";
+import TextInputScreen from "./TextInputScreen";
 
 // init object to store user preferences where key - question identifier, type - data type question can store
 const initialPreferences = new Object();
@@ -14,77 +15,55 @@ preferencesMetadata.forEach((question) => {
     initialPreferences[key] =  type;
 }); 
 
-// place pages dictionary here where key = index and value = component to render
-    const pages = {
-        0 : 'Name', // REPLACE W ACTUAL COMPONENT
-        1 : 'Meal options',
-        2 : 'Budget'
-    }
 
 export default function PreferencesForm(){
     `
         Render and save selected user preferences 
 
-        userPreferences - stores user preferences, preferences based on input provided for each question
-        key - unique question identifier, only stores key of currently displayed question
-        index - indexes preferences metadata to control form navigation
+        currPage - Context variable that stores index for currently displayed page
+        pages - Object that stores which input type to render along with its associated page (key)
     `
-    const [userPreferences, setUserPreferences] = useState(initialPreferences);   
-    const [key, setKey] = useState(""); 
-    let index = useRef(0);
-    
-    // change which page is currently selected
-    const { currPage, setCurrPage }  = UseFormContext();
+    // stores currently displayed page and implements form navigation
+    const { currPage, setCurrPage }  = useFormContext();
 
     
-    
-    // save user preferences
-    const handlePreferences = (key, value) => {
-        setUserPreferences((prev) => ( { ...prev, [key]: value } ))
+    // Render appropriate form input based on selected question. key - form index, value - component to return
+    const pages = {
+        0 : <TextInputScreen id={preferencesMetadata[0]["key"]} inputType={preferencesMetadata[0]["input_type"]}/>, 
+        1 : <MultiselectScreen id={preferencesMetadata[1]["key"]} options={preferencesMetadata[1]["input_type"]}/>,
+        2 : <TextInputScreen id={preferencesMetadata[2]["key"]} inputType={preferencesMetadata[2]["input_type"]}/>,
     }
+
 
     // handles forward and backwards navigation between questions
     const onNext = () => {
         // save data and route to home page when user finishes form
-        // if (index.current === preferencesMetadata.length - 1) route to dashboard
-        index.current++;
-        setKey(preferencesMetadata[index.current]["key"]); // save current key value
 
         // trigger submit function when on final page
-        if ( currPage === preferencesMetadata.length - 1 ) return; // replace w submit button
-        setCurrPage(currPage + 1);
-    }
-
-    const onBack = () => {
-        index.current--;
-        setKey(preferencesMetadata[index.current]["key"]); // save current key value
-        setCurrPage(currPage--);
+        if ( currPage.current === preferencesMetadata.length - 1 ) return; // replace w submit button
+        setCurrPage( prev => prev + 1 );
     }
 
     return(
-        <KeyboardAvoidingView key={key} behavior="padding" 
+        <KeyboardAvoidingView behavior="padding" 
             keyboardVerticalOffset={Platform.OS ? 100 : 0 }>
 
-                {/* navigation buttons */}
-                <Pressable onPress={onNext} disabled={index.current === preferencesMetadata.length - 1 ? true : false}>
+                {/* Next and Previous buttons handle forward and backward form navigation */}
+                <Pressable onPress={onNext} disabled={currPage === preferencesMetadata.length - 1 ? true : false}>
                     <Text> Next </Text>
                 </Pressable>
 
                 {/* TO-DO - USE STYLING TO HIDE BUTTON INSTEAD OF DISABLE IT */}
-                <Pressable onPress={onBack} disabled={index.current === 0 ? true : false}>
+                <Pressable disabled={currPage === 0 ? true : false} onPress={ (prev) => setCurrPage( prev => prev - 1 )}>
                     <Text> Previous </Text>
                 </Pressable>
 
-                {/* index preferencesMetadata to display only one question (with it's related data) at a time */}
-                <Text>{preferencesMetadata[index.current]["question"]}</Text>
-                <Text>{preferencesMetadata[index.current]["subheading"]}</Text>
+                {/* Index preferencesMetadata to display that page's question and subheading */}
+                <Text>{preferencesMetadata[currPage]["question"]}</Text>
+                <Text>{preferencesMetadata[currPage]["subheading"]}</Text>
 
-                {/* conditionally change page style based on input type */}
-                    <TextInput 
-                        onChangeText={(val) => handlePreferences(key, val)}
-                        value={userPreferences[key]}
-                        keyboardType={preferencesMetadata[index.current]["input_type"]}
-                    />  
+                {/* Index pages object to render input type for currently selected page */}
+                { pages[currPage] } 
         </KeyboardAvoidingView>
                 
     );
