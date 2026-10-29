@@ -1,32 +1,18 @@
 `
-    Accepts text input from users
+    Accept and store text input from users to store in user preferences
 `
-import { useState } from "react";
 import { TextInput } from "react-native";
-import { preferencesMetadata } from "../../utils/preferences_metadata";
-
-const initialPreferences = new Object();
-
-preferencesMetadata.forEach((question) => { 
-    let key = question["key"];
-    let type = question["default_value"];
-
-    initialPreferences[key] =  type;
-}); 
+import { useFormContext } from "../../utils/FormContext";
 
 export default function TextInputScreen({ id, inputType }) {
-    const [userPreferences, setUserPreferences] = useState(initialPreferences); 
-
-    // save user preferences
-    const handlePreferences = (id, value) => {
-        setUserPreferences((prev) => ( { ...prev, [id]: value } ))
-    }
+    const { preferences, handlePreferences } = useFormContext();
 
     return(
         <TextInput 
             onChangeText={(val) => handlePreferences(id, val)}
-            value={userPreferences[id]}
+            value={preferences[id]}
             keyboardType={inputType}
+            autoFocus={true}
         />  
     )
 }

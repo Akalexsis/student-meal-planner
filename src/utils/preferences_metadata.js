@@ -21,7 +21,7 @@ export const preferencesMetadata = [
         default_value : " ",
         question : "Monthly Budget",
         subheading : "To reach your financial goals, please enter your monthly budget.",
-        input_type : "numberic",
+        input_type : "number-pad",
         required : "true"
     },
 ]

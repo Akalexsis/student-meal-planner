@@ -3,6 +3,7 @@
 `
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { useFormContext } from "../../utils/FormContext";
 
 export default function MultiselectScreen({id, options}) {
     ` 
@@ -14,6 +15,7 @@ export default function MultiselectScreen({id, options}) {
     `
     const [isSelected, setIsSelected] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
+    const { handlePreferences } = useFormContext();
 
     console.log(`Options: ${options}`);
 
@@ -35,6 +37,9 @@ export default function MultiselectScreen({id, options}) {
             if (prev.includes(option)) prev.filter( (item) => { item !== option } );
             else [...prev, option];
         });
+
+        // save selections to global context
+        // handlePreferences(id, selectedItems);
     }
     console.log(`Selected items: ${selectedItems}`);
 
