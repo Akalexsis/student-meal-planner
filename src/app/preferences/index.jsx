@@ -1,5 +1,5 @@
 // Preferences UI to display preferences form to user
-import { KeyboardAvoidingView, Platform, Pressable, Text } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { useFormContext } from "../../utils/FormContext";
 import { preferencesMetadata } from "../../utils/preferences_metadata";
 import MultiselectScreen from "./MultiSelectScreen";
@@ -33,21 +33,29 @@ export default function PreferencesForm(){
     }
 
     return(
-        <KeyboardAvoidingView behavior="padding" 
-            keyboardVerticalOffset={Platform.OS ? 100 : 0 }>
+        <KeyboardAvoidingView 
+            className="flex-1 items-center bg p-6"
+            behavior="padding" 
+            keyboardVerticalOffset={Platform.OS ? 100 : 0 }
+        >
 
                 {/* Next and Previous buttons handle forward and backward form navigation */}
-                <Pressable onPress={onNext} disabled={currPage === preferencesMetadata.length - 1 ? true : false}>
-                    <Text> { currPage === preferencesMetadata.length - 1 ? "Submit" : "Next" } </Text>
-                </Pressable>
-
-                <Pressable disabled={currPage === 0 ? true : false} onPress={ (prev) => setCurrPage( prev => prev - 1 )}>
-                    <Text> { currPage === 0 ? " " : "Previous" }  </Text>
-                </Pressable>
+                <View className="flex-row">
+                    <Pressable disabled={currPage === 0 ? true : false} onPress={ (prev) => setCurrPage( prev => prev - 1 )}>
+                        <Text className="p-2 text-primaryGreen text-md hover:bg-primaryOrange hover:text-primaryGreen"> { currPage === 0 ? null : "Previous" }  </Text>
+                    </Pressable>
+                    <Pressable 
+                        className="rounded-sm"
+                        onPress={onNext} disabled={currPage === preferencesMetadata.length - 1 ? true : false}
+                    >
+                        <Text className="p-2 text text-md bg-primaryGreen hover:bg-primaryOrange hover:text-primaryGreen"> { currPage === preferencesMetadata.length - 1 ? "Submit" : "Next" } </Text>
+                    </Pressable> 
+                </View>
+                
 
                 {/* Index preferencesMetadata to display that page's question and subheading */}
-                <Text>{preferencesMetadata[currPage]["question"]}</Text>
-                <Text>{preferencesMetadata[currPage]["subheading"]}</Text>
+                <Text className="text-3xl/[2] text-primaryGreen font-medium">{preferencesMetadata[currPage]["question"]}</Text>
+                <Text className="pb-6 text-xl/[2] font-medium">{preferencesMetadata[currPage]["subheading"]}</Text>
 
                 {/* Index pages object to render input type for currently selected page */}
                 { pages[currPage] } 

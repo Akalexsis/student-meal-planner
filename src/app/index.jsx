@@ -10,7 +10,7 @@ export default function Index() {
           to get started.
       </Text>
       {/* Directs users to the preferences questionnaire */}
-      <Link className="bg-prmaryOrange text-md text"
+      <Link className="text text-md hover:text-prmaryOrange"
         href="/preferences"> 
         Get Started 
       </Link>

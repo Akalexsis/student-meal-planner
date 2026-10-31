@@ -9,6 +9,7 @@ export default function TextInputScreen({ id, inputType }) {
 
     return(
         <TextInput 
+            className="caret-primaryGreen"
             onChangeText={(val) => handlePreferences(id, val)}
             value={preferences[id]}
             keyboardType={inputType}
