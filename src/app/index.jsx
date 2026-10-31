@@ -1,15 +1,19 @@
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import Screen from "../components/Screen";
 
 export default function Index() {
   return (
-    <View className="flex-1 items-center justify-center bg-green-500">
-      <Text style="">WELCOME</Text>
-      <Text> Make meal planning fast, affordable, and stress free! Click the button below
+    <Screen >
+      <Text className="text-5xl/[2] text-yellowAccent font-medium tracking-wide">WELCOME</Text>
+      <Text className="text-lg text"> Make meal planning fast, affordable, and stress free! Click the button below
           to get started.
       </Text>
       {/* Directs users to the preferences questionnaire */}
-      <Link href="/preferences"> Get Started </Link>
-    </View>
+      <Link className="bg-prmaryOrange text-md text"
+        href="/preferences"> 
+        Get Started 
+      </Link>
+    </Screen>
   );
 }
