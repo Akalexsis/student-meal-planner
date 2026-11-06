@@ -34,8 +34,8 @@ export default function MultiselectScreen({id, options}) {
         // }
 
          setSelectedItems((prev) => {
-            if (prev.includes(option)) prev.filter( (item) => { item !== option } );
-            else [...prev, option];
+            if (isSelected) [...prev, option]; 
+            else prev.filter( (item) => { item !== option } );
         });
 
         // save selections to global context

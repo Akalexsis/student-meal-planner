@@ -1,10 +1,10 @@
 // Preferences UI to display preferences form to user
+import { router } from "expo-router";
 import { KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { useFormContext } from "../../utils/FormContext";
 import { preferencesMetadata } from "../../utils/preferences_metadata";
 import MultiselectScreen from "./MultiSelectScreen";
 import TextInputScreen from "./TextInputScreen";
-
 
 export default function PreferencesForm(){
     `
@@ -27,7 +27,10 @@ export default function PreferencesForm(){
 
     // handles forward and backwards navigation between questions
     const onNext = () => {
-        // TO-DO route to home page when user submits form
+        // route to home page when user submits form
+        if (currPage === preferencesMetadata.length - 1) {
+            return router.push("../(tabs)/Settings");
+        }
 
         setCurrPage( prev => prev + 1 );
     }
@@ -46,7 +49,7 @@ export default function PreferencesForm(){
                     </Pressable>
                     <Pressable 
                         className="rounded-sm"
-                        onPress={onNext} disabled={currPage === preferencesMetadata.length - 1 ? true : false}
+                        onPress={onNext}
                     >
                         <Text className="p-2 text text-md bg-primaryGreen hover:bg-primaryOrange hover:text-primaryGreen"> { currPage === preferencesMetadata.length - 1 ? "Submit" : "Next" } </Text>
                     </Pressable> 
@@ -54,7 +57,7 @@ export default function PreferencesForm(){
                 
 
                 {/* Index preferencesMetadata to display that page's question and subheading */}
-                <Text className="text-3xl/[2] text-primaryGreen font-medium">{preferencesMetadata[currPage]["question"]}</Text>
+                <Text className="font text-3xl/[2] text-primaryGreen font-medium">{preferencesMetadata[currPage]["question"]}</Text>
                 <Text className="pb-6 text-xl/[2] font-medium">{preferencesMetadata[currPage]["subheading"]}</Text>
 
                 {/* Index pages object to render input type for currently selected page */}
