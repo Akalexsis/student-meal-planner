@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import { KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { useFormContext } from "../../utils/FormContext";
 import { preferencesMetadata } from "../../utils/preferences_metadata";
-import MultiselectScreen from "./MultiSelectScreen";
 import TextInputScreen from "./TextInputScreen";
 
 export default function PreferencesForm(){
@@ -20,7 +19,6 @@ export default function PreferencesForm(){
     // Render appropriate form input based on selected question. key - form index, value - component to return
     const pages = {
         0 : <TextInputScreen id={preferencesMetadata[0]["key"]} inputType={preferencesMetadata[0]["input_type"]}/>, 
-        1 : <MultiselectScreen id={preferencesMetadata[1]["key"]} options={preferencesMetadata[1]["input_type"]}/>,
         2 : <TextInputScreen id={preferencesMetadata[2]["key"]} inputType={preferencesMetadata[2]["input_type"]}/>,
     }
 
