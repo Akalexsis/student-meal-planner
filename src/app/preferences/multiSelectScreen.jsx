@@ -19,27 +19,23 @@ export default function MultiselectScreen({id, options}) {
 
     console.log(`Options: ${options}`);
 
-    // toggle button each time it is selected and save response
     const onSelect = (option) => {
-        setIsSelected(!isSelected);
-        console.log(`Option ${option}: ${isSelected}`);
+        `
+            Save selected cuisine when user clicks on that option, otherwise remove from saved 
+            cuisine array selectedItems
+        `
+        // setIsSelected(!isSelected);
         
-        // remove item if it has already been saved, else save it
-        // if (!isSelected) {
-        //     let filteredItems = selectedItems.filter( (item) => { item !== option } );
-        //     setSelectedItems(filteredItems);
-        // } 
-        // else {
-        //     setSelectedItems((prev) => [...prev, option]);
-        // }
-
-         setSelectedItems((prev) => {
-            if (isSelected) [...prev, option]; 
-            else prev.filter( (item) => { item !== option } );
-        });
+        // if selected option not already saved, save it
+        if (!selectedItems.includes(option)) {
+            setSelectedItems([...selectedItems, option]);
+        } 
+        else {
+            setSelectedItems(selectedItems.filter( (item) => item !== option ));
+        }
 
         // save selections to global context
-        // handlePreferences(id, selectedItems);
+        handlePreferences(id, selectedItems);
     }
     console.log(`Selected items: ${selectedItems}`);
 
@@ -49,13 +45,18 @@ export default function MultiselectScreen({id, options}) {
                 {
                     options && options.map((option, key) => {
                         return(
-                            <Pressable key={key} onPress={(option) => onSelect(option)}>
-                                <Text> {option} </Text>
-                            </Pressable>
+                            <View key={key}>
+                                <Pressable 
+                                    className="hover:bg-primaryGreen"
+                                    onPress={() => onSelect(option)}>
+                                    <Text> {option} </Text>
+                                </Pressable>
+                            </View>
                         );
                     })
-                }
-            </View>
+                } 
+            </View>   
         );
 
 }
+

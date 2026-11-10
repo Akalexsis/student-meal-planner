@@ -13,7 +13,18 @@ export const preferencesMetadata = [
         default_value : [],
         question : "Preferred Cuisines",
         subheading : "To improve meal recommendations, select the cuisines you like most.",
-        input_type : ["American", "Mexican", "Quick and Easy", "Indian", "Mediterranean", "Inexpensive", "Italian"],
+        input_type : [
+            "brazilian",
+            "mexican", 
+            "low_sugar", 
+            "under_30_minutes", 
+            "easy",
+            "indian", 
+            "mediterranean",
+            "thanksgiving_classics", 
+            "italian",
+             "desserts"
+        ],
         required : "true"
     },
     {
