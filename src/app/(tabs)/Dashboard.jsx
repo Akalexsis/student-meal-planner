@@ -7,13 +7,14 @@ import { response } from "../../utils/seed.js";
 
 function MealCard({meal}) {
     ` UI container for each meal `
-    // console.log(JSON.stringify(meal));
+    
     return(
-        <View className="m-8 p-6 w-120 bg">
+        <View className="m-8 w-120 h-200 bg shadow-md rounded-xl">
             <Image source={{ uri: meal["thumbnail_url"] }}
-                    style={{width: 400, height: 400}} />
-            <Text> { meal["name"] } </Text>
-            <Text> Cook time: { meal["cook_time_minutes"] }| ${ meal["price"]["total"] }</Text>
+                    style={{height: 100}} 
+                    className="rounded-xl"/>
+            <Text className="p-3"> { meal["name"] } </Text>
+            <Text className="p-3"> Cook time: { meal["cook_time_minutes"] } minutes | ${ meal["price"]["total"] }</Text>
         </View>
     );
 }
@@ -21,22 +22,36 @@ function MealCard({meal}) {
 export default function Dashboard() {
     // Get all of user's saved cuisine preferences
     const { preferences } = useFormContext();
-    const data = response["resulsts"];
+    const preferredCuisine = preferences["cuisine"];
+
+    // cuisine - the type of cuisine the user prefers to see
+    const tempPreferences = ["american", "italian", "desserts"];
+    const data = response["resulsts"]; // data - the data to render over
     
     // Fetch all preferences to render to screen
     return(
-        <ScrollView className="flex-1 p-8 bg">
+        <ScrollView className="flex-1 p-8">
             <Text> 
                 Test's Dashboard 
             </Text>
             {/* Display fetched cuisines by category if fetch was successful, else display error message */}
-            <Text> American </Text>
-                <FlatList
-                    data={data}
-                    renderItem={({item}) => <MealCard meal={item} />}
-                    horizontal
-                />
-            
+            {
+                tempPreferences && tempPreferences.map((cuisine, key) =>
+                    {
+                        return(
+                            <View key={key}>
+                                <Text> {cuisine} </Text>
+                                <FlatList
+                                    data={data}
+                                    renderItem={({item}) => <MealCard meal={item} />}
+                                    horizontal
+                                />
+                            </View>
+                        )
+                    }
+                )
+                
+            }
         </ScrollView>
     );
 };
