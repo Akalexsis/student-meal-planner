@@ -5,16 +5,20 @@ const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
 const path = require("path");
+const NodeCache = require("node-cache");
 
-// Create new web server and setup basic server configurations
+// ===========================================================
+// CREATE WEB SERVER AND SETUP SERVER CONFIGURATIONS
+// ===========================================================
 const app = express();
 
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors);
-app.use(express.json);
-const port = 3360;
+app.use(cors());
+app.use(express.json());
+const port = 3306;
 
 const pswrd = process.env.PASSWORD;
+const cache = new NodeCache();
 
 // Establish connection to SQL database
 const db = mysql.createConnection({
@@ -24,14 +28,86 @@ const db = mysql.createConnection({
     database: "meal_planner",
     port: port
 });
+cache.set("user", ["Test", 300.00, ["American", "Italian", ]]);
 
-db.connect((err) => {
-    if (err) console.log(`=== ERROR: COULDN'T CONNECT TO DATABASE: ${err} ===`);
-    else console.log(`=== DATABASE CONNECTION SUCCESSFUL ===`);
+// ===========================================================
+// CREATE APP DATABASE AND TABLES
+// ===========================================================
+db.connect((err) => 
+    {
+        if (err) console.log(`=== ERROR: COULDN'T CONNECT TO DATABASE: ${err} ===`);
+        else {
+            // Create new database for user to access and store data into
+            // const create_database = ` CREATE DATABASE meal_preferences`;
+
+            // db.query(create_database, (err) => {
+            //     if (err) console.log(`=== ERROR CREATING DATABASE: ${err}  ===`);
+            //     else console.log(`=== DATABASE CONNECTION SUCCESSFUL ===`);
+            // });
+
+            console.log(`=== DATABASE CONNECTION SUCCESSFUL ===`);
+        };
+    }
+);
+
+// Create users table to store user information - id, name, and budget
+// const create_users = ` CREATE TABLE IF NOT EXISTS users 
+//                         (id INT AUTO_INCREMENT PRIMARY KEY, 
+//                         name VARCHAR(50), 
+//                         budget FLOAT)`;
+// db.query(create_users, (err) => {
+//     if (err) console.log(`=== ERROR CREATING USERS TABLE ${err} ===`);
+//     else console.log(`=== USERS TABLE SUCCESSFULLY CREATED ===`);
+// })
+
+// Create preferences table to store user meal preferences. user_id references id in user table
+// const create_preferences = ` CREATE TABLE IF NOT EXISTS preferences 
+//                             (user_id INT, cuisine varchar(50))`;
+// db.query(create_preferences, (err) => {
+//     if (err) console.log(`=== ERROR CREATING TABLE: ${err}  ===`);
+//     else console.log(`=== PREFERENCES TABLE SUCCESSFULLY CREATED ===`);
+// });
+
+// Save all selected user preferences to database
+
+app.post("/post-preferences", (req, res) => {
+    ` Save user preferences to database`
+    // get all user info
+    const name = req.body.name;
+    const budget = req.body.budget;
+    const cuisine = req.body.cuisine;
+
+    // check if given data has already been cached
+    console.log(`POSTED DATA: Name - ${name}, Budget - $${budget}, Cuisines - ${cuisine}`);
+
+    // check that the name hasn't already been taken
+    const hasName = `SELECT * FROM users WHERE name=?`;
+
+    db.query(hasName, [name,], (err, result) => {
+        if (err) {
+            console.log(" === ERROR LOCATING USER === ");
+            return res.json({"status": 500, "message": "Error locating provided user"});
+        }
+
+        if (result[0].name == name) { res.json({"status": 500, "message": "Error: Username already taken"}); }
+        else {
+            const insert_user = `INSERT INTO users(name, budget) VALUES(?,?)`;
+            db.query(insert_user, [name, budget,], (err, result) => {
+                if (err) {
+                    console.log(" === ERROR CREATING NEW USER === ");
+                    res.json({"status": 500, "message": "Error creating a new user, please try again"});
+                }
+                else { savePreferences(result[0].id, cuisine); }
+            })
+        }
+
+    });
+
+    // save info if not empty, else ask them to submit the form again
+
 })
+// SAVE DATA FROM API CALL
 
-
-
-app.listen(port, () => {
-    console.log("=== WEB SERVER STARTED ===")
+app.listen(8081, () => {
+    console.log("=== WEB SERVER STARTED ===");
 });
