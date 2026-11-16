@@ -20,11 +20,6 @@ const port = 3306;
 const pswrd = process.env.PASSWORD;
 const cache = new NodeCache();
 
-// ===========================================================
-// API ENDPOINTS
-// ===========================================================
-const getMeal = "";
-
 // Establish connection to SQL database
 const db = mysql.createConnection({
     host: "localhost",
@@ -172,7 +167,14 @@ function parseResponse(meal) {
 // Fetch data for a specific cuisine and parse response data
 async function getCuisines(cuisine) {
     try {
-        const response = await fetch(getMeal);
+        const response = await fetch(`${process.env.MEALS_ENDPOINT}?from=0&size=7&tags=${cuisine}`,
+            {
+                headers: {
+                    "x-rapidapi-host": "tasty.p.rapidapi.com",
+                    "x-rapidapi-key" : process.env.API_AUTH_KEY
+                }
+            }
+        );
         const data = await response.json();
         console.log(`API fetch result: ${data}`);
 
