@@ -27,10 +27,22 @@ export default function PreferencesForm(){
     const onNext = () => {
         // route to home page when user submits form
         if (currPage === preferencesMetadata.length - 1) {
+            // Get prefered cuisine from user and fetch those cuisines
+            // const prefs = preferences["cuisine"];
+            const prefs = ["american", "brazilian", "under_30_minutes"];
             return router.push("../(tabs)/Dashboard");
         }
 
         setCurrPage( prev => prev + 1 );
+    }
+
+    const fetchMeals = async(meals) => {
+        try {
+            const response = await fetch('http://localhost:3360/get-cuisines');
+        }
+        catch (error) {
+
+        }
     }
 
     return(
