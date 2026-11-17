@@ -71,59 +71,59 @@ db.connect((err) =>
 // CREATE NEW USER AND STORE PREFERENCES
 // ===========================================================
 // Save all selected user preferences to database
-// function savePreferences(user_id, cuisines) {
-//     ` 
-//         Save all user's preferred meals to the database and fetch them from the API
-//         user_id - integer that uniquely identifies the user
-//         cuisine - array of cuisines the user prefers to see
-//     `
-//     // Save each listed cuisine to preferences table
-//     cuisines.forEach((cuisine) => {
-//         console.log(`Current cuisine: ${cuisine}`);
-//         const insert_cuisine = `INSERT INTO preferences(user_id, cuisine) VALUES(?,?)`;
+function savePreferences(user_id, cuisines) {
+    ` 
+        Save all user's preferred meals to the database and fetch them from the API
+        user_id - integer that uniquely identifies the user
+        cuisine - array of cuisines the user prefers to see
+    `
+    // Save each listed cuisine to preferences table
+    cuisines.forEach((cuisine) => {
+        console.log(`Current cuisine: ${cuisine}`);
+        const insert_cuisine = `INSERT INTO preferences(user_id, cuisine) VALUES(?,?)`;
 
-//         db.query(insert_cuisine, [user_id, cuisine,], (err) => {
-//             if (err) return console.log(`There was an error saving your preferred cuisine`);
-//         });
-//     })
-// }
+        db.query(insert_cuisine, [user_id, cuisine,], (err) => {
+            if (err) return console.log(`There was an error saving your preferred cuisine`);
+        });
+    })
+}
 
 // ===========================================================
 // QUERIES
 // ===========================================================
-// app.post("/post-preferences", (req, res) => {
-//     ` Save user preferences to database`
-//     // get all user info
-//     const name = req.body.name;
-//     const budget = req.body.budget;
-//     const cuisines = req.body.cuisine;
+app.post("/post-preferences", (req, res) => {
+    ` Save user preferences to database`
+    // get all user info
+    const name = req.body.name;
+    const budget = req.body.budget;
+    const cuisines = req.body.cuisine;
 
-//     // check if given data has already been cached
-//     console.log(`POSTED DATA: Name - ${name}, Budget - $${budget}, Cuisines - ${cuisines}`);
+    // check if given data has already been cached
+    console.log(`POSTED DATA: Name - ${name}, Budget - $${budget}, Cuisines - ${cuisines}`);
 
-//     // check that the name hasn't already been taken
-//     const hasName = `SELECT * FROM users WHERE name=?`;
+    // check that the name hasn't already been taken
+    const hasName = `SELECT * FROM users WHERE name=?`;
 
-//     db.query(hasName, [name,], (err, result) => {
-//         if (err) {
-//             console.log(" === ERROR LOCATING USER === ");
-//             return res.json({"status": 500, "message": "Error locating provided user"});
-//         }
+    db.query(hasName, [name,], (err, result) => {
+        if (err) {
+            console.log(" === ERROR LOCATING USER === ");
+            return res.json({"status": 500, "message": "Error locating provided user"});
+        }
 
-//         if (result[0].name == name) { res.json({"status": 500, "message": "Error: Username already taken"}); }
-//         else {
-//             const insert_user = `INSERT INTO users(name, budget) VALUES(?,?)`;
-//             db.query(insert_user, [name, budget,], (err, result) => {
-//                 if (err) {
-//                     console.log(" === ERROR CREATING NEW USER === ");
-//                     res.json({"status": 500, "message": "Error creating a new user, please try again"});
-//                 }
-//                 else { savePreferences(result[0].id, cuisines); }
-//             })
-//         }
-//     });
+        if (result[0].name == name) { res.json({"status": 500, "message": "Error: Username already taken"}); }
+        else {
+            const insert_user = `INSERT INTO users(name, budget) VALUES(?,?)`;
+            db.query(insert_user, [name, budget,], (err, result) => {
+                if (err) {
+                    console.log(" === ERROR CREATING NEW USER === ");
+                    res.json({"status": 500, "message": "Error creating a new user, please try again"});
+                }
+                else { savePreferences(result[0].id, cuisines); }
+            })
+        }
+    });
 
-// });
+});
 
 // ===========================================================
 // API REQUESTS
@@ -150,9 +150,9 @@ function parseResponse(meal) {
         newMeal["serving_size"] = meal["num_servings"];
         newMeal["cook_time"] = meal["total_time_minutes"];
 
-        newMeal["mealPrice"] = meal["price"]["total"];
-        newMeal["mealImage"] = meal["thumbnail_url"];
-        newMeal["mealAltText"] = meal["thumbnail_alt_text"];
+        newMeal["price"] = meal["price"]["total"];
+        newMeal["image"] = meal["thumbnail_url"];
+        newMeal["imageAltText"] = meal["thumbnail_alt_text"];
 
         // Add results to newMeal object where key is the name of the results key and value is the variable
         console.log(`Parsed data: ${JSON.stringify(newMeal)}`);
@@ -192,7 +192,7 @@ async function getCuisines(cuisine) {
 app.get("/get-cuisines", (req, res) => {
     try {
         // Get list of cuisines from user
-        const cuisines = req.body.cuisines;
+        const cuisines = req.params.cuisines;
         console.log(`User Cuisines: ${cuisines}`);
 
         // For each cuisine, make API call to endpoint if cuisine data not already saved
